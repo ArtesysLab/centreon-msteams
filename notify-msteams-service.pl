@@ -31,42 +31,33 @@ my @sections;
 my @actions;
 my @targets;
 my $webhook;
-my $web2url = "https://monitoring.mydomane.com/centreon";
+my $notificationtype;
+my $servicedesc;
+my $hostname;
+my $hostaddress;
+my $servicestate;
+my $longdatetime;
+my $serviceoutput;
+my $webUrl = '';
 my $proxyUrl = '';
+
 my %color = ( 'OK' => '008000', 'WARNING' => 'ffff00', 'UNKNOWN' => '808080','CRITICAL' => 'ff0000',
               'UP' => '008000', 'DOWN' => 'ff0000', 'UNREACHABLE' => 'ff8700');
-my $webhookuid;
-my $longdatetime;
-my $servicename;
-my $hostname;
-my $hostdisplayname;
-my $serviceoutput;
-my $servicestate;
-my $notificationtype;
-my $servicedisplayname;
-my $hostaddress;
-my $hostaddress6;
-my $notificationauthorname;
-my $notificationcomment;
 
 #
 # Get command-line options
 #
 GetOptions (
-"p=s" => \$webhook,
-"WEB2URL:s" => \$web2url,
-"d=s"  => \$longdatetime,
-"e:s"  => \$servicename,
-"l=s"  => \$hostname,
-"n=s"  => \$hostdisplayname,
-"o=s"  => \$serviceoutput,
-"s:s"  => \$servicestate,
-"t=s"  => \$notificationtype,
-"u=s"  => \$servicedisplayname,
-"4=s"  => \$hostaddress,
-"6=s"  => \$hostaddress6,
-"b=s"  => \$notificationauthorname,
-"c=s"  => \$notificationcomment
+"wh=s" => \$webhook,
+"nt=s" => \$notificationtype,
+"sd=s" => \$servicedesc,
+"hn=s" => \$hostname,
+"ha=s" => \$hostaddress,
+"ss=s" => \$servicestate,
+"dt=s" => \$longdatetime,
+"so=s" => \$serviceoutput,
+"wu:s" => \$webUrl,
+"pu:s" => \$proxyUrl
 )
 or die("Error in command line arguments\n");
 
@@ -79,34 +70,43 @@ $event{'@type'} = "MessageCard";
 $event{'@context'} = "https://schema.org/extensions";
 
 $event{'themecolor'} = $color{"$servicestate"};
-$event{'title'} = "$hostdisplayname : $servicename is $servicestate";
+$event{'title'} = "$notificationtype alert - $hostname/$servicedesc is $servicestate";
 $event{'summary'} = $event{'title'};
 my @facts = ({
-    'name' => "Host:",
-    'value' => "$hostdisplayname"
-   },{
-    'name' => "Service:",
-    'value' => "$servicename"
-   },{
-    'name' => "Details:",
-    'value' => "$serviceoutput"
+  'name' => "Notification Type:",
+  'value' => "$notificationtype"
+},{
+  'name' => "Service:",
+  'value' => "$servicedesc"
+},{
+  'name' => "Host:",
+  'value' => "$hostname"
+},{
+  'name' => "Address:",
+  'value' => "$hostaddress"
+},{
+  'name' => "State:",
+  'value' => "$servicestate"
+},{
+  'name' => "Date/Time:",
+  'value' => "$longdatetime"
+},{
+  'name' => "Additional Info:",
+  'value' => "$serviceoutput"
 });
 
 my %section;
-if (not length($notificationcomment)) {
- %section = ( 'facts' => \@facts );
-} else {
- %section = ( 'text' => "Comment: $notificationcomment | Author: $notificationauthorname", 'facts' => \@facts );
-}
-
+%section = ( 'facts' => \@facts );
 push(@sections, \%section);
 $event{'sections'} = \@sections;
 
-if ($web2url ne '') {
+# add button if -wu option is used
+
+if ($webUrl ne '') {
   #replace / with %2F
-  $servicename =~ s/\//%2F/g;
+  $servicedesc =~ s/\//%2F/g;
   $hostname =~ s/\//%2F/g;
-  my $encodedURL =  "${web2url}/main.php?p=20201&o=svcd&host_name=${hostname}&service_description=${servicename}";
+  my $encodedURL =  "${webUrl}/main.php?p=20201&o=svcd&host_name=${hostname}&service_description=${servicedesc}";
   
   my %target = (
         'os' => 'default',

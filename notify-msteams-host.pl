@@ -100,10 +100,10 @@ $event{'sections'} = \@sections;
 if ($webUrl ne '') {
   #replace / with %2F
   $hostname =~ s/\//%2F/g;
-  my $encodedURL =  "$webUrl/main.php?p=20202&o=hd&host_name=${hostname}";
+  my $encodedURL =  "${webUrl}/main.php?p=20202&o=hd&host_name=${hostname}";
   my %target = (
         'os' => 'default',
-	'uri' => $encodedURL
+	'uri' => "$encodedURL"
   );
   push(@targets, \%target);
   my %link = (
