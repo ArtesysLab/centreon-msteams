@@ -50,7 +50,7 @@ GetOptions (
 "wh=s" => \$webhook,
 "nt=s" => \$notificationtype,
 "hn=s" => \$hostname,
-"hs:s" => \$hoststate,
+"hs=s" => \$hoststate,
 "ha=s" => \$hostaddress,
 "ho=s" => \$hostoutput,
 "dt=s" => \$longdatetime,
