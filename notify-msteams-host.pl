@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-#V0.2
+# version 0.1
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# modified version of nagios-mstreams.pl for icinga2 without env's
+# forked from https://github.com/NeverUsedID/icinga2-msteams
+# and modified for Centreon
 
 use warnings;
 use strict;
@@ -26,12 +27,11 @@ use LWP::UserAgent;
 use JSON;
 
 my %event;
-my %nagios;
 my @sections;
 my @actions;
 my @targets;
 my $webhook;
-my $icingaweb2url = "https://monitoring.mydomane.com/icingaweb2";
+my $web2url = "https://monitoring.mydomane.com/centreon";
 my $proxyUrl = '';
 my %color = ( 'OK' => '008000', 'WARNING' => 'ffff00', 'UNKNOWN' => '808080','CRITICAL' => 'ff0000',
               'UP' => '008000', 'DOWN' => 'ff0000', 'UNREACHABLE' => 'ff8700');
@@ -54,7 +54,7 @@ my $notificationcomment;
 #
 GetOptions (
 "p=s" => \$webhook,
-"ICINGAWEB2URL:s" => \$icingaweb2url,
+"WEB2URL:s" => \$web2url,
 "d=s"  => \$longdatetime,
 "e:s"  => \$servicename,
 "l=s"  => \$hostname,
@@ -74,7 +74,7 @@ or die("Error in command line arguments\n");
 # Format message card
 #
 
-$event{'title'} = "Icinga2 Notification";
+$event{'title'} = "Centreon Notification";
 $event{'@type'} = "MessageCard";
 $event{'@context'} = "https://schema.org/extensions";
 
@@ -99,10 +99,10 @@ if (not length($notificationcomment)) {
 push(@sections, \%section);
 $event{'sections'} = \@sections;
 
-if ($icingaweb2url ne '') {
+if ($web2url ne '') {
   #replace / with %2F
   $hostname =~ s/\//%2F/g;
-  my $encodedURL =  "$icingaweb2url/monitoring/host/show?host=${hostname}";
+  my $encodedURL =  "$web2url/main.php?p=20202&o=hd&host_name=${hostname}";
   my %target = (
         'os' => 'default',
 	'uri' => $encodedURL
@@ -110,7 +110,7 @@ if ($icingaweb2url ne '') {
   push(@targets, \%target);
   my %link = (
       '@type' => 'OpenUri',
-      'name' => 'Open in Icinga2',
+      'name' => 'Open in Centreon',
       'targets' => \@targets
   );
   push(@actions, \%link);
