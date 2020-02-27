@@ -1,5 +1,5 @@
 # centreon-msteams
-A Centreon plugin to send notifications to MS teams
+A Centreon plugin to send notifications to MS Teams
 
 
 ## Prerequisites
