@@ -30,12 +30,12 @@ Examples:
 
 Command Name: host-notify-by-msteams  
 Command Type: Notification  
-Command Line: $CENTREONPLUGINS$/notify-msteams-host.pl -wh 'https://outlook.office.com/webhook/CHANGEME' -nt $NOTIFICATIONTYPE$ -hn $HOSTNAME$ -hs $HOSTSTATE$ -ha $HOSTADDRESS$ -ho $HOSTOUTPUT$ -dt $DATE$  
+Command Line: $CENTREONPLUGINS$/notify-msteams-host.pl --wh='https://outlook.office.com/webhook/CHANGEME' --nt='$NOTIFICATIONTYPE$' --hn='$HOSTNAME$' --hs='$HOSTSTATE$' --ha='$HOSTADDRESS$' --ho='$HOSTOUTPUT$' --dt='$SHORTDATETIME$'  
 Enable shell: Yes  
 
 Command Name: service-notify-by-msteams  
 Command Type: Notification  
-Command Line: $CENTREONPLUGINS$/notify-msteams-service.pl -wh 'https://outlook.office.com/webhook/CHANGEME' -nt $NOTIFICATIONTYPE$ -sd $SERVICEDESC$ -hn $HOSTALIAS$ -ha $HOSTADDRESS$ -ss $SERVICESTATE$ -dt $DATE$ -so $SERVICEOUTPUT$  
+Command Line: $CENTREONPLUGINS$/notify-msteams-service.pl --wh='https://outlook.office.com/webhook/CHANGEME' --nt='$NOTIFICATIONTYPE$' --sd='$SERVICEDESC$' --hn='$HOSTALIAS$' --ha='$HOSTADDRESS$' --ss='$SERVICESTATE$' --dt='$SHORTDATETIME$' --so='$SERVICEOUTPUT$'  
 Enable shell: Yes  
 
 
