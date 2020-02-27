@@ -31,42 +31,31 @@ my @sections;
 my @actions;
 my @targets;
 my $webhook;
-my $web2url = "https://monitoring.mydomane.com/centreon";
+my $notificationtype;
+my $hostname;
+my $hoststate;
+my $hostaddress;
+my $hostoutput;
+my $longdatetime;
+my $webUrl = '';
 my $proxyUrl = '';
+
 my %color = ( 'OK' => '008000', 'WARNING' => 'ffff00', 'UNKNOWN' => '808080','CRITICAL' => 'ff0000',
               'UP' => '008000', 'DOWN' => 'ff0000', 'UNREACHABLE' => 'ff8700');
-my $webhookuid;
-my $longdatetime;
-my $servicename;
-my $hostname;
-my $hostdisplayname;
-my $hostoutput;
-my $hoststate;
-my $notificationtype;
-my $servicedisplayname;
-my $hostaddress;
-my $hostaddress6;
-my $notificationauthorname;
-my $notificationcomment;
 
 #
 # Get command-line options
 #
 GetOptions (
-"p=s" => \$webhook,
-"WEB2URL:s" => \$web2url,
-"d=s"  => \$longdatetime,
-"e:s"  => \$servicename,
-"l=s"  => \$hostname,
-"n=s"  => \$hostdisplayname,
-"o=s"  => \$hostoutput,
-"s:s"  => \$hoststate,
-"t=s"  => \$notificationtype,
-"u=s"  => \$servicedisplayname,
-"4=s"  => \$hostaddress,
-"6=s"  => \$hostaddress6,
-"b=s"  => \$notificationauthorname,
-"c=s"  => \$notificationcomment
+"wh=s" => \$webhook,
+"nt=s" => \$notificationtype,
+"hn=s" => \$hostname,
+"hs:s" => \$hoststate,
+"ha=s" => \$hostaddress,
+"ho=s" => \$hostoutput,
+"dt=s" => \$longdatetime,
+"wu:s" => \$webUrl,
+"pu:s" => \$proxyUrl
 )
 or die("Error in command line arguments\n");
 
@@ -79,30 +68,39 @@ $event{'@type'} = "MessageCard";
 $event{'@context'} = "https://schema.org/extensions";
 
 $event{'themecolor'} = $color{"$hoststate"};
-$event{'title'} = "$hostdisplayname is $hoststate";
+$event{'title'} = "Host $hoststate alert for $hostname !";
 $event{'summary'} = $event{'title'};
 my @facts = ({
-    'name' => "Host:",
-    'value' => "$hostdisplayname"
-   },{
-    'name' => "Details:",
-    'value' => "$hostoutput"
+  'name' => "Type:",
+  'value' => "$notificationtype"
+},{
+  'name' => "Host:",
+  'value' => "$hostname"
+},{
+  'name' => "State:",
+  'value' => "$hoststate"
+},{
+  'name' => "Address:",
+  'value' => "$hostaddress"
+},{
+  'name' => "Info:",
+  'value' => "$hostoutput"
+},{
+  'name' => "Date/Time:",
+  'value' => "$longdatetime"
 });
 
 my %section;
-if (not length($notificationcomment)) {
- %section = ( 'facts' => \@facts );
-} else {
- %section = ( 'text' => "Comment: $notificationcomment | Author: $notificationauthorname", 'facts' => \@facts );
-}
-
+%section = ( 'facts' => \@facts );
 push(@sections, \%section);
 $event{'sections'} = \@sections;
 
-if ($web2url ne '') {
+# add button if -wu option is used
+
+if ($webUrl ne '') {
   #replace / with %2F
   $hostname =~ s/\//%2F/g;
-  my $encodedURL =  "$web2url/main.php?p=20202&o=hd&host_name=${hostname}";
+  my $encodedURL =  "$webUrl/main.php?p=20202&o=hd&host_name=${hostname}";
   my %target = (
         'os' => 'default',
 	'uri' => $encodedURL
