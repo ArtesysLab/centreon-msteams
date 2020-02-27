@@ -21,7 +21,6 @@ These perl modules need to be installed.
 1. Place the script in /usr/lib/centreon/plugins
 2. `chmod +x /usr/lib/centreon/plugins/notify-msteams-*.pl`
 3. Configure commands on Centreon
-4. Add the complete Webhook URL (including https://) for Teams Channel as Pager into your contact.
 
 
 ## Usage
