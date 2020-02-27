@@ -28,7 +28,7 @@ These perl modules need to be installed.
 
 Examples:
 
-Command Name : host-notify-by-msteams  
+Command Name: host-notify-by-msteams  
 Command Type: Notification  
 Command Line: $CENTREONPLUGINS$/notify-msteams-host.pl -wh 'https://outlook.office.com/webhook/CHANGEME' -nt $NOTIFICATIONTYPE$ -hn $HOSTNAME$ -hs $HOSTSTATE$ -ha $HOSTADDRESS$ -ho $HOSTOUTPUT$ -dt $DATE$  
 Enable shell: Yes  
