@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# version 0.1
+# version 0.2
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ use strict;
 #use URI::Encode;
 
 use Getopt::Long;
-use HTTP::Request::Common qw(POST);
-use HTTP::Status qw(is_client_error);
-use LWP::UserAgent;
+use Net::Curl::Easy qw(/^CURLOPT_/);;
 use JSON;
 
 my %event;
@@ -128,20 +126,18 @@ my $json = encode_json \%event;
 # Make the request
 #
 
-my $ua = LWP::UserAgent->new;
+my $ua_c = Net::Curl::Easy->new();
+
+$ua_c->setopt(CURLOPT_TIMEOUT, '15');
+
 if ($proxyUrl ne '') {
-  $ua->proxy(['http','https'], "$proxyUrl");
+  $ua_c->setopt(CURLOPT_PROXY, "$proxyUrl");
 };
-$ua->timeout(15);
 
-my $req = HTTP::Request->new('POST', $webhook);
-$req->header('Content-Type' => 'application/json');
-$req->content($json);
-print($json);
+$ua_c->setopt(CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+$ua_c->setopt(CURLOPT_POSTFIELDS, "$json");
+$ua_c->setopt(CURLOPT_URL, "$webhook");
+$ua_c->perform();
 
-my $s = $req->as_string;
-print STDERR "Request:\n$s\n";
-
-my $resp = $ua->request($req);
-$s = $resp->as_string;
-print STDERR "Response:\n$s\n";
+my $error = $ua_c->error();
+print STDERR "Last error: $error\n";

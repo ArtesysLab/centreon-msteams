@@ -6,8 +6,7 @@ A Centreon plugin to send notifications to MS Teams
 
 These perl modules need to be installed.
 
- - HTTP::Request
- - LWP::UserAgent (>= 6.06)
+ - Net::Curl::Easy
  - JSON
 
 
